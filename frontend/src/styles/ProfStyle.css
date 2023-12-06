@@ -1,0 +1,10 @@
+.profile-page{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+.profile-detail{
+    padding: 10px;
+    width: 100%;
+}
