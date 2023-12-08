@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { Avatar, List, Space, Skeleton, Typography, Icon } from "antd";
 import '../styles/ProfStyle.css'
 import NavBar from '../components/NavBar';
@@ -10,19 +10,40 @@ function Dep() {
   // If the data is loading, show a skeleton
 
   const [complaints, setComplaints] = useState([]);
+  const [imageURL, setImageURL] = useState();
+  const [error, setError] = useState('');
 
   const params = useParams();
   useEffect(() => {
-
+    // make an axios request to the server with the params.name as the parameter
     axios(`http://localhost:5000/dep/${params.name}`)
-    .then(res => {
+      .then(res => {
+        // get the image data as a blob object
+        // let imageBlob = res.blob();
+        let imageBlob = '';
+  
+        // get the json data as a javascript object
+        // let jsonData = res.json();
+  
+        // return both the image blob and the json data as a promise
+        return Promise.all([imageBlob, res]);
+      })
+      .then(([imageBlob, jsonData]) => {
+        // create a URL for the image blob
+        // setImageURL(URL.createObjectURL(imageBlob));
+        console.log(jsonData)
+        setComplaints(jsonData.data.complaints);
+      })
+      .catch(err => {
+        // handle the error
+        console.error(err);
+        // display an error message to the user
+        setError('Something went Wrong!');
+      });
+  }, [params.name]); // use the params.name as the dependency for the useEffect hook
+  
 
-      setComplaints(res.data);
-    })
-    .catch(err => console.log(err))
-  },[])
-
-  const loading = false, error = "";
+  const loading = false;
 
   if (loading) return <Skeleton active />;
 
@@ -46,6 +67,7 @@ function Dep() {
             dataSource={complaints}
             renderItem={(complaint, index) => <ListEle key={index} complaint={complaint.description}/>}
           />
+          <Link to='/complaint'>Add complaint</Link>
         </Space>
       </div>
       </>
