@@ -6,6 +6,7 @@ import NavBar from '../components/NavBar';
 import axios from 'axios'
 import ListEle from '../components/ListEle';
 
+
 function Dep() {
   // If the data is loading, show a skeleton
 

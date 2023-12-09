@@ -46,16 +46,10 @@ function NavBar() {
                         </Link>
                     </li>
                     <li className="navbar__item">
-                        <a href="#" className="navbar__link">
-                            <i data-feather="help-circle"></i>
-                            <span>Help</span>
-                        </a>
-                    </li>
-                    <li className="navbar__item">
-                        <a href="#" className="navbar__link">
+                        <Link to="/complaint" className="navbar__link">
                             <i data-feather="settings"></i>
-                            <span>Settings</span>
-                        </a>
+                            <span>Complaint</span>
+                        </Link>
                     </li>
                 </ul>
             </nav>

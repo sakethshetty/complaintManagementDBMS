@@ -12,9 +12,16 @@ function SignUp() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [dob, setDob] = useState('');
+  const [error, setError] = useState('');
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    setError('');
+    if(password != confirmPassword){
+
+      setError("Password Didn't Match!");
+    }
 
     axios.post('http://localhost:5000/signup', {
       firstName: firstName,
@@ -67,6 +74,7 @@ function SignUp() {
             <button type="submit" className="loginButton">Sign Up</button>
           </div>
           <Link to='/login' className="noAcc">have an account?</Link>
+          {error && <p style={{color : "red"}}>{error}</p>}
         </form>
       </div>
     </>

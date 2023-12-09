@@ -8,7 +8,7 @@ function HomeBody() {
     const [depList, setDepList] = useState([])
 
     useEffect(() => {
-        axios.get("http://localhost:5000/dep")
+        axios.get("http://localhost:5000/departments")
         .then(res => {
             console.log(res.data)
             setDepList(res.data);

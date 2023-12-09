@@ -1,13 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
+import axios from "axios";
 
 function ComplaintForm() {
   const [department, setDepartment] = useState("");
   const [heading, setHeading] = useState("");
   const [description, setDescription] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ department, heading, description });
+    axios.post('http://localhost:5000/complaints', {
+      dep : department,
+      heading : heading,
+      description : description
+    })
+    .then(res => console.log(res))
+    .catch(err => console.log(err))
     setDepartment("");
     setHeading("");
     setDescription("");
@@ -56,7 +63,7 @@ function ComplaintForm() {
       border: "1px solid #ccc",
       borderRadius: "5px",
       outline: "none",
-      resize : "vertical"
+      resize: "vertical"
     },
     button: {
       width: "100%",
@@ -70,6 +77,21 @@ function ComplaintForm() {
       cursor: "pointer",
     },
   };
+
+  const [depList, setDepList] = useState([]);
+
+  useEffect(() => {
+
+    axios.get("http://localhost:5000/departments")
+      .then(res => {
+        console.log(res.data)
+        setDepList(res.data);
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }, [])
+
 
   return (
     <form style={styles.form} onSubmit={handleSubmit}>
@@ -85,10 +107,9 @@ function ComplaintForm() {
           required
         >
           <option value="">Select a department</option>
-          <option value="sales">Sales</option>
-          <option value="support">Support</option>
-          <option value="finance">Finance</option>
-          <option value="hr">HR</option>
+          {
+            depList.map((dep, index) => <option key={index} value={dep}>{dep}</option>)
+          }
         </select>
       </div>
       <div style={styles.formGroup}>
