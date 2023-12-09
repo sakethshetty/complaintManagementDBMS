@@ -32,10 +32,21 @@ app.get('/departments', (req, res) => {
 
 app.post('/signup', async (req, result) => {
     const {firstName, lastName, email, password, dob} = req.body
+
+
+
     console.log(req.body)
     pool.query("Select * from userdetails where userdetails.email=?",[email], (err, res, field) => {
 
-      console.log(err);
+      if(err){
+        console.log(err);
+        res.status(500).send("Something went wrong!");
+      }
+
+      // if(res.length == 0){
+        
+      //   pool.query("insert into userdetails values (?,?,?,?,?)",[firstName, lastName, email, ])
+      // }
     })
 })
 
