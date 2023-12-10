@@ -3,6 +3,7 @@ import '../styles/LoginStyle.css'
 import { Link } from 'react-router-dom'
 import axios from "axios";
 import NavBar from "../components/NavBar";
+import { useNavigate } from "react-router-dom";
 
 function SignUp() {
 
@@ -13,6 +14,7 @@ function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [dob, setDob] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate()
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -32,9 +34,11 @@ function SignUp() {
     })
       .then(res => {
         console.log(res)
+        navigate('/login')
       })
       .catch(err => {
         console.log(err)
+        setError(err.response.data)
       })
   }
 

@@ -1,7 +1,9 @@
 // Import React and useState hook
-import React from "react";
+import React,{useEffect} from "react";
 import ComplaintForm from "../components/ComplaintForm";
 import NavBar from "../components/NavBar";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // Define a custom component for the complaint page
 function ComplaintPage() {
@@ -29,6 +31,17 @@ function ComplaintPage() {
       boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
     }
   };
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+
+      axios.get("/auth", {
+        withCredentials : true
+      })
+      .then(res => console.log(res))
+      .catch(err => navigate('/login'))
+  })
 
   // Return the JSX code for the page
   return (

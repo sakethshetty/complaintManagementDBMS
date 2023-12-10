@@ -6,12 +6,21 @@ function ComplaintForm() {
   const [heading, setHeading] = useState("");
   const [description, setDescription] = useState("");
 
+  // useEffect(() => {
+
+  //   axios.get("http://localhost:5000/auth",{
+  //     withCredentials : true
+  //   })
+  // })
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     axios.post('http://localhost:5000/complaints', {
       dep : department,
       heading : heading,
       description : description
+    }, {
+      withCredentials : true
     })
     .then(res => console.log(res))
     .catch(err => console.log(err))

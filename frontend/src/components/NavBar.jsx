@@ -1,11 +1,35 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import '../styles/NavStyle.css'
 import { MdClose } from 'react-icons/md'
 import { FiMenu } from 'react-icons/fi'
 import {Link} from 'react-router-dom'
+import axios from 'axios'
 
 function NavBar() {
     const [showMenu, setShowMenu] = useState(false)
+    const [islogged, setIsLogged] = useState(false)
+
+    useEffect(() => {
+        axios.get("http://localhost:5000/auth",{
+            withCredentials : true
+        })
+        .then(res => {console.log(res);setIsLogged(res.data.isLogged)})
+        .catch(err => console.log("Something went Wrong!"));
+    })
+
+    function handleLogout(){
+
+        axios.get("http://localhost:5000/logout", {
+            withCredentials : true
+        })
+        .then(res => {
+            setIsLogged(false)
+            console.log(islogged)
+            console.log(res);
+        }
+        )
+        .catch(err => console.log(err))
+    }
 
     const toggleMenu = () => {
         setShowMenu(!showMenu)
@@ -36,7 +60,10 @@ function NavBar() {
                     <li className="navbar__item">
                         <Link to="/login" className="navbar__link">
                             <i data-feather="message-square"></i>
-                            <span>Login</span>
+                            {
+                                console.log(islogged)
+                            }
+                            {islogged ? <span onClick={handleLogout}>Logout</span> : <span>Login</span>}
                         </Link>
                     </li>
                     <li className="navbar__item">

@@ -66,7 +66,7 @@ function Dep() {
             className="complaint-list"
             header={<Typography.Title level={3}>Complaints Recieved</Typography.Title>}
             dataSource={complaints}
-            renderItem={(complaint, index) => <ListEle key={index} complaint={complaint.description}/>}
+            renderItem={(complaint, index) => <ListEle key={index} complaint={complaint.cdesc}/>}
           />
           <Link to='/complaint'>Add complaint</Link>
         </Space>

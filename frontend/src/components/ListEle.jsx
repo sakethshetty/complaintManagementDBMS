@@ -1,4 +1,5 @@
-import React from 'react'
+import React,{useEffect, useState} from 'react'
+import axios from 'axios';
 
 function ListEle(props) {
 
@@ -38,10 +39,17 @@ function ListEle(props) {
         color: '#fff',
       };
 
+      const [stateStyle, setStateStyle] = useState(pendingStyle)
+
+    function handleState(){
+
+      stateStyle == pendingStyle ? setStateStyle(resolvedStyle) : setStateStyle(pendingStyle);
+    }
+
     return (
         <li style={liStyle}>
             <div style={titleStyle}>{props.complaint}</div>
-            <div style={{ ...statusStyle, ...pendingStyle }}>Pending</div>
+            <div style={{ ...statusStyle, ...stateStyle }} onClick={handleState}>Pending</div>
         </li>
     )
 }

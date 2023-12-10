@@ -18,7 +18,7 @@ function Login() {
     axios.post('http://localhost:5000/login', {
       email: email,
       password: password
-    })
+    },{withCredentials : true})
       .then(res => {
         console.log(res);
         navigate('/');
