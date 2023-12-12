@@ -5,6 +5,7 @@ import '../styles/ProfStyle.css'
 import NavBar from '../components/NavBar';
 import axios from 'axios'
 import ListEle from '../components/ListEle';
+import { useNavigate } from 'react-router-dom';
 
 
 function Dep() {
@@ -13,11 +14,14 @@ function Dep() {
   const [complaints, setComplaints] = useState([]);
   const [imageURL, setImageURL] = useState();
   const [error, setError] = useState('');
+  const navigate = useNavigate()
 
   const params = useParams();
   useEffect(() => {
     // make an axios request to the server with the params.name as the parameter
-    axios(`http://localhost:5000/dep/${params.name}`)
+    axios.get(`http://localhost:5000/dep/${params.name}`,{
+      withCredentials : true
+    })
       .then(res => {
         // get the image data as a blob object
         // let imageBlob = res.blob();
@@ -39,6 +43,7 @@ function Dep() {
         // handle the error
         console.error(err);
         // display an error message to the user
+        navigate('/login')
         setError('Something went Wrong!');
       });
   }, [params.name]); // use the params.name as the dependency for the useEffect hook
@@ -49,7 +54,7 @@ function Dep() {
   if (loading) return <Skeleton active />;
 
   // If there is an error, show a message
-  if (error) return <Typography.Text type="danger">{error.message}</Typography.Text>;
+  // if (error) return <Typography.Text type="danger">{error.message}</Typography.Text>;
 
   // If the data is loaded, show the user profile
   return (
@@ -66,7 +71,7 @@ function Dep() {
             className="complaint-list"
             header={<Typography.Title level={3}>Complaints Recieved</Typography.Title>}
             dataSource={complaints}
-            renderItem={(complaint, index) => <ListEle key={index} complaint={complaint.cdesc}/>}
+            renderItem={(complaint, index) => <ListEle key={index} complaint={complaint}/>}
           />
           <Link to='/complaint'>Add complaint</Link>
         </Space>

@@ -9,7 +9,6 @@ const containerStyle = {
     alignItems: 'center',
     justifyContent: 'center',
     height: '100vh',
-    backgroundColor: '#f0f0f0',
 };
 
 const titleStyle = {
@@ -22,13 +21,13 @@ const titleStyle = {
 const subtitleStyle = {
     fontFamily: "'Roboto', sans-serif",
     fontSize: '24px',
-    color: '#666666',
+    color: '#333',
 };
 
 const paragraphStyle = {
     fontFamily: "'Roboto', sans-serif",
     fontSize: '18px',
-    color: '#999999',
+    color: '#333',
     textAlign: 'center',
     maxWidth: '600px',
 };

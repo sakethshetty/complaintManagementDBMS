@@ -61,8 +61,8 @@ app.post('/login', async (req, res) => {
                     console.log("Login successful");
                     req.session.user = {
                         id: result[0].uid,
-                        fname : result[0].fname,
-                        lname : result[0].lname,
+                        fname: result[0].fname,
+                        lname: result[0].lname,
                         role: "user"
                     }
                     res.status(200).send("Success");
@@ -89,27 +89,27 @@ app.post('/login', async (req, res) => {
 
                     // Compare the input password with the hashed password using bcrypt.compare function
                     // bcrypt.compare(password, hash, (err, match) => {
-                        // if (err) {
-                        //     // Handle errors
-                        //     console.log(err);
-                        //     return res.status(500).send("Server error");
-                        // }
-                        // console.log(match)
-                        if (hash == password) {
-                            // Passwords match, authenticate the user and redirect them to the home page
-                            console.log("Login successful");
-                            req.session.user = {
-                                id: result[0].cid,
-                                fname : result[0].fname,
-                                lname : result[0].lname,
-                                role: "handler"
-                            }
-                            res.status(200).send("Success");
-                        } else {
-                            // Passwords do not match, display an error message and ask the user to try again
-                            console.log("Invalid password");
-                            res.status(400).send("Invalid username")
+                    // if (err) {
+                    //     // Handle errors
+                    //     console.log(err);
+                    //     return res.status(500).send("Server error");
+                    // }
+                    // console.log(match)
+                    if (hash == password) {
+                        // Passwords match, authenticate the user and redirect them to the home page
+                        console.log("Login successful");
+                        req.session.user = {
+                            id: result[0].cid,
+                            fname: result[0].fname,
+                            lname: result[0].lname,
+                            role: "handler"
                         }
+                        res.status(200).send("Success");
+                    } else {
+                        // Passwords do not match, display an error message and ask the user to try again
+                        console.log("Invalid password");
+                        res.status(400).send("Invalid username")
+                    }
                     // });
                 } else {
                     console.log("Invalid User")
@@ -137,7 +137,7 @@ app.post('/signup', (req, res) => {
             res.status(500).send("Internal Server Error!")
             return;
         }
-        console.log("hi",res2)
+        console.log("hi", res2)
         if (res2.length > 0) {
             res.status(400).send("Email already in use!");
             return;
@@ -193,23 +193,40 @@ app.post('/complaints', async (req, res) => {
             return;
         }
         did = res1[0].did
-    })
 
-    var today = new Date(); // get the current date
-    var year = today.getFullYear(); // get the year (four digits)
-    var month = today.getMonth() + 1; // get the month (zero-based, so add one)
-    var day = today.getDate(); // get the day of the month
-    // add leading zeros to month and day if needed
-    if (month < 10) month = '0' + month;
-    if (day < 10) day = '0' + day;
-    // concatenate the components into a date string
-    var date = year + '-' + month + '-' + day;
+        console.log(res1);
 
-    pool.query("INSERT INTO complaint (cdate, title, cdesc, did, cid, uid, state) VALUES (?,?,?,?,?,?,?)", [date, req.body.heading, req.body.description, Math.floor(Math.random() * 3), req.session.user.id, did, "Pending"], (err2, res2) => {
+        var today = new Date(); // get the current date
+        var year = today.getFullYear(); // get the year (four digits)
+        var month = today.getMonth() + 1; // get the month (zero-based, so add one)
+        var day = today.getDate(); // get the day of the month
+        // add leading zeros to month and day if needed
+        if (month < 10) month = '0' + month;
+        if (day < 10) day = '0' + day;
+        // concatenate the components into a date string
+        var date = year + '-' + month + '-' + day;
 
-        console.log(err2)
+        pool.query("select count(*) as cnt from complaintHandler", (err3, res3) => {
 
-        console.log(res2)
+            if(err3){
+
+                console.log(err3);
+                return res.status(500).send("Something went wrong!")
+            }
+
+            let cid = Math.floor(Math.random()*res3[0].cnt)
+            console.log(res3)
+
+
+
+            pool.query("INSERT INTO complaint (cdate, title, cdesc, did, cid, uid, state) VALUES (?,?,?,?,?,?,?)", [date, req.body.heading, req.body.description, cid, did, req.session.user.id, "Pending"], (err2, res2) => {
+
+                console.log(err2)
+    
+                console.log(res2)
+            })
+
+        })
     })
 
 
@@ -235,7 +252,7 @@ app.get('/auth', (req, res) => {
     if (req.session.user) {
         res.status(200).json({
             isLogged: true,
-            user : req.session.user
+            user: req.session.user
         })
     } else {
         res.status(400).json({
@@ -255,7 +272,7 @@ app.get('/dashboard', (req, res) => {
     }
 
     if (req.session.user.role == "user") {
-        pool.query("select title, cdesc, state from complaint C, userDetails U where C.uid=U.uid and U.uid=?", [req.session.user.id], (err1, res1) => {
+        pool.query("select title, cdesc, state, C.id from complaint C, userDetails U where C.uid=U.uid and U.uid=? and C.state in (\"Review\", \"Pending\")", [req.session.user.id], (err1, res1) => {
 
             if (err1) {
                 console.log(err1)
@@ -270,7 +287,7 @@ app.get('/dashboard', (req, res) => {
             res.status(200).json({ complaints: res1 })
         })
     } else {
-        pool.query("select title, cdesc, state from complaint C, complaintHandler CH where CH.cid=C.cid and CH.cid=?", [req.session.user.id], (err1, res1) => {
+        pool.query("select title, cdesc, state, C.id from complaint C, complaintHandler CH where CH.cid=C.cid and CH.cid=? and state=\"Pending\"", [req.session.user.id], (err1, res1) => {
 
             if (err1) {
                 console.log(err1)
@@ -287,6 +304,35 @@ app.get('/dashboard', (req, res) => {
     }
 });
 
+app.post('/toggle', (req, res) => {
+
+    if (!req.session.user) return;
+    console.log(req.body.id)
+    if (req.session.user.role == "user") {
+        pool.query("update complaint set state=? where id=?", ["Resolved", req.body.id], (err1, res1) => {
+
+            if (err1) {
+
+                console.log(err1);
+                return res.status(500).send("Internal Server Error!")
+            }
+
+            res.status(200).send("Updated!");
+        })
+    } else {
+
+        pool.query("update complaint set state=? where id=?", ["Review", req.body.id], (err1, res1) => {
+
+            if (err1) {
+
+                console.log(err1)
+                return res.status(500).send("Internal Server Error!")
+            }
+
+            res.status(200).send("Updated!");
+        })
+    }
+})
 
 app.get('/userdp', (req, res) => {
 
@@ -316,7 +362,9 @@ app.get('/dep/:depName', (req, res) => {
 
     console.log(req.params.depName)
 
-    pool.query("select title, cdesc, state from complaint C, dept D where C.did=D.did and D.dname=?", [req.params.depName], (err1, res1) => {
+    if (!req.session.user) return res.status(400).send("Login First!");
+
+    pool.query(`select title, cdesc, state, C.id from complaint C, dept D where C.did=D.did and D.dname=? and ${req.session.user.role == "user" ? "C.uid=? and state in (\"Pending\",\"Review\")" : "C.cid=? and state=\"Pending\""}`, [req.params.depName, req.session.user.id], (err1, res1) => {
 
         if (err1) {
             console.log(err1)

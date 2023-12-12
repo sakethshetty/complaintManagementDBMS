@@ -1,5 +1,5 @@
 // Import React and useState hook
-import React,{useEffect} from "react";
+import React,{useEffect, useState} from "react";
 import ComplaintForm from "../components/ComplaintForm";
 import NavBar from "../components/NavBar";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,6 @@ function ComplaintPage() {
       alignItems: "center",
       justifyContent: "center",
       height: "100vh",
-      backgroundColor: "#f0f0f0",
     },
     title: {
       fontSize: "2rem",
@@ -33,14 +32,17 @@ function ComplaintPage() {
   };
 
   const navigate = useNavigate()
+  const [msg, setMsg] = useState('');
 
   useEffect(() => {
 
-      axios.get("/auth", {
+      axios.get("http://localhost:5000/auth", {
         withCredentials : true
       })
-      .then(res => console.log(res))
-      .catch(err => navigate('/login'))
+      .then(res => {
+        setMsg("Submitted!")
+      })
+      .catch(err => {console.log(err);navigate('/login')})
   })
 
   // Return the JSX code for the page
@@ -49,6 +51,7 @@ function ComplaintPage() {
       <NavBar />
       <div style={styles.container}>
         <h1 style={styles.title}>Complaint Page</h1>
+        {msg && <p>{msg}</p>}
         <ComplaintForm style={styles.form} />
       </div>
     </>
